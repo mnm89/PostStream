@@ -2,16 +2,9 @@
 
 A new Flutter project.
 
-<figure>
-<img src="./docs/IMG.jpg" width="600" alt="Flutter Flow" >
-<figcaption>
-Flutter uses plugins to communicate with each platform's native API
-</figcaption>
-</figure>
-
 # Getting Started
 
-This project is a starting point for google maps with geolocation in Flutter application .
+This project is an example of using google maps with geolocation in Flutter application .
 
 A few resources to get you started if this is your first Flutter project:
 
@@ -27,7 +20,6 @@ samples, guidance on mobile development, and a full API reference.
 # App Context
 
 This is a sample of map displaying [google offices](https://about.google/static/data/locations.json) with markers.
-When the map is created successfully the camera move to the current device location.
 
 ## Screenshots
 
@@ -46,15 +38,12 @@ extensions :
 
 - [Dart](https://marketplace.visualstudio.com/items?itemName=Dart-Code.dart-code)
 - [Flutter](https://marketplace.visualstudio.com/items?itemName=Dart-Code.flutter)
-- [Todo Tree](https://marketplace.visualstudio.com/items?itemName=Gruntfuggly.todo-tree)
 
 Run Vscode and click `File > Open` the select the current folder `./`
 
-Click the `Todo Tree` icon <img src="./docs/TodoTree.Icons.Default" width="30"> and Fix all the FIXMEs
-
 - `FIXME: Add your Google Maps API key` : replace `XXXXXXXXXXXXXX` with your [google maps api key](https://developers.google.com/maps/documentation/javascript/get-api-key)
 
-run in terminal on the source folder `flutter run`
+run `flutter run`
 
 ## ios
 
