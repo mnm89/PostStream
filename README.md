@@ -29,6 +29,14 @@ samples, guidance on mobile development, and a full API reference.
 This is a sample of map displaying [google offices](https://about.google/static/data/locations.json) with markers.
 When the map is created successfully the camera move to the current device location.
 
+## Screenshots
+
+<img src="./docs/1.png" width="300" alt="" >
+<img src="./docs/2.png" width="300" alt="" >
+<img src="./docs/3.png" width="300" alt="" >
+<img src="./docs/4.png" width="300" alt="" >
+<img src="./docs/5.png" width="300" alt="" >
+
 # Run project
 
 ## web
