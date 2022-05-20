@@ -107,13 +107,14 @@ class _HomePageState extends State<HomePage> {
   void _initMarkers() async {
     final googleOffices = await locations.getGoogleOffices();
     final List<MapMarker> markers = [];
+    final BitmapDescriptor markerImage = await MapHelper.getMarkerImageFromUrl(
+        'https://img.icons8.com/office/25/000000/marker.png');
     for (final office in googleOffices.offices) {
       markers.add(
         MapMarker(
           id: office.name,
           position: LatLng(office.lat, office.lng),
-          icon:
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+          icon: markerImage,
           infoWindow: InfoWindow(
             title: office.name,
             snippet: office.address,
@@ -127,15 +128,16 @@ class _HomePageState extends State<HomePage> {
         ),
       );
     }
+
+    _clusterManager = await MapHelper.initClusterManager(
+      markers,
+      _minClusterZoom,
+      _maxClusterZoom,
+    );
     setState(() {
       _markers = markers.map((e) => e.toMarker()).toSet();
     });
-    // _clusterManager = await MapHelper.initClusterManager(
-    //   markers,
-    //   _minClusterZoom,
-    //   _maxClusterZoom,
-    // );
-    // _updateMarkers();
+    _updateMarkers();
   }
 
   /// Gets the markers and clusters to be displayed on the map for the current zoom level and
@@ -157,7 +159,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _onCameraMove(CameraPosition position) async {
-    // _updateMarkers(position.zoom);
+    _updateMarkers(position.zoom);
   }
 
   Future<void> _onMapTypeButtonPressed() async {
@@ -174,8 +176,8 @@ class _HomePageState extends State<HomePage> {
       _loading = true;
     });
     if (!_centered) {
-      (await _controller.future).animateCamera(
-          CameraUpdate.newLatLngZoom(const LatLng(0, 0), _currentZoom));
+      (await _controller.future)
+          .animateCamera(CameraUpdate.newLatLngZoom(const LatLng(0, 0), 2));
       setState(() {
         _centered = true;
         _loading = false;
@@ -183,22 +185,12 @@ class _HomePageState extends State<HomePage> {
     } else {
       final position = await _determinePosition();
       inspect(position);
+      setState(() {
+        _centered = false;
+        _loading;
+      });
       (await _controller.future).animateCamera(CameraUpdate.newLatLngZoom(
           LatLng(position.latitude, position.longitude), 11));
-      setState(() {
-        _markers.add(
-          Marker(
-            markerId: const MarkerId('ME'),
-            position: LatLng(position.latitude, position.longitude),
-            icon:
-                BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-            infoWindow:
-                const InfoWindow(title: "My Current Position", snippet: ''),
-          ),
-        );
-        _centered = false;
-        _loading = false;
-      });
     }
   }
 
@@ -223,6 +215,7 @@ class _HomePageState extends State<HomePage> {
               onCameraMove: _onCameraMove,
               myLocationButtonEnabled: false,
               mapToolbarEnabled: false,
+              zoomControlsEnabled: false,
             ),
             // Map loading indicator
             Opacity(

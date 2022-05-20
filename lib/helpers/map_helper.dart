@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui';
 
 import 'package:fluster/fluster.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -17,43 +16,12 @@ class MapHelper {
   /// This mechanism is possible using the [DefaultCacheManager] package and is useful
   /// to improve load times on the next map loads, the first time will always take more
   /// time to download the file and set the marker image.
-  ///
-  /// You can resize the marker image by providing a [targetWidth].
-  static Future<BitmapDescriptor> getMarkerImageFromUrl(
-    String url, {
-    int? targetWidth,
-  }) async {
+  static Future<BitmapDescriptor> getMarkerImageFromUrl(String url) async {
     final File markerImageFile = await DefaultCacheManager().getSingleFile(url);
 
     Uint8List markerImageBytes = await markerImageFile.readAsBytes();
 
-    markerImageBytes = await _resizeImageBytes(
-      markerImageBytes,
-      targetWidth ?? 100,
-    );
-
     return BitmapDescriptor.fromBytes(markerImageBytes);
-  }
-
-  /// Resizes the given [imageBytes] with the [targetWidth].
-  ///
-  /// We don't want the marker image to be too big so we might need to resize the image.
-  static Future<Uint8List> _resizeImageBytes(
-    Uint8List imageBytes,
-    int targetWidth,
-  ) async {
-    final Codec imageCodec = await instantiateImageCodec(
-      imageBytes,
-      targetWidth: targetWidth,
-    );
-
-    final FrameInfo frameInfo = await imageCodec.getNextFrame();
-
-    final ByteData byteData = (await frameInfo.image.toByteData(
-      format: ImageByteFormat.png,
-    ))!;
-
-    return byteData.buffer.asUint8List();
   }
 
   /// Inits the cluster manager with all the [MapMarker] to be displayed on the map.
@@ -65,6 +33,9 @@ class MapHelper {
     int minZoom,
     int maxZoom,
   ) async {
+    /// Url image used on cluster markers
+    final BitmapDescriptor clusterImage = await MapHelper.getMarkerImageFromUrl(
+        'https://img.icons8.com/ios-filled/30/place-marker--v1.png');
     return Fluster<MapMarker>(
       minZoom: minZoom,
       maxZoom: maxZoom,
@@ -73,14 +44,14 @@ class MapHelper {
       nodeSize: 64,
       points: markers,
       createCluster: (
-        BaseCluster cluster,
-        double lng,
-        double lat,
+        BaseCluster? cluster,
+        double? lng,
+        double? lat,
       ) =>
           MapMarker(
-        id: cluster.id.toString(),
-        position: LatLng(lat, lng),
-        icon: BitmapDescriptor.defaultMarker,
+        id: cluster!.id.toString(),
+        position: LatLng(lat!, lng!),
+        icon: clusterImage,
         isCluster: true,
         clusterId: cluster.id,
         pointsSize: cluster.pointsSize,
