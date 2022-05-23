@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'package:fluster/fluster.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_in_flutter/helpers/map_marker.dart';
+import 'package:google_maps_in_flutter/models/map_marker.dart';
 
 /// In here we are encapsulating all the logic required to get marker icons from url images
 /// and to show clusters using the [Fluster] package.
@@ -63,15 +63,13 @@ class MapHelper {
 
   /// Gets a list of markers and clusters that reside within the visible bounding box for
   /// the given [currentZoom]. For more info check [Fluster.clusters].
-  static List<Marker> getClusterMarkers(
-    Fluster<MapMarker> clusterManager,
+  static List<MapMarker> getClusterMarkers(
+    Fluster<MapMarker>? clusterManager,
     double currentZoom,
   ) {
     if (clusterManager == null) return [];
 
     return clusterManager
-        .clusters([-180, -85, 180, 85], currentZoom.toInt())
-        .map((cluster) => cluster.toMarker())
-        .toList();
+        .clusters([-180, -85, 180, 85], currentZoom.toInt()).toList();
   }
 }

@@ -41,7 +41,6 @@ class App extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const LoginPage(),
-      debugShowCheckedModeBanner: false,
       routes: {
         'login': (context) => const LoginPage(),
         'register': (context) => const RegistrationPage(),
