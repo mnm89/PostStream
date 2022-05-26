@@ -2,9 +2,10 @@ import 'dart:async';
 
 import 'package:fluster/fluster.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_in_flutter/helpers/map_helper.dart';
-import 'package:google_maps_in_flutter/models/map_marker.dart';
+import 'package:google_maps_in_flutter/services/geolocation_service.dart';
 
 class PostSearchMapView extends StatefulWidget {
   const PostSearchMapView({Key? key, required this.markers}) : super(key: key);
@@ -16,7 +17,11 @@ class PostSearchMapView extends StatefulWidget {
 }
 
 class _PostSearchMapViewState extends State<PostSearchMapView> {
-  final Completer<GoogleMapController> _controller = Completer();
+  /// Google Map controller
+  late GoogleMapController _controller;
+
+  /// Current device location
+  late Position _currentPosition;
 
   /// Minimum zoom at which the markers will cluster
   final int _minClusterZoom = 0;
@@ -33,51 +38,72 @@ class _PostSearchMapViewState extends State<PostSearchMapView> {
   /// Map loading flag
   bool _isMapLoading = true;
 
-  bool _loading = false;
-  final bool _centered = true;
-
-  get markers => null;
+  /// Markers to be displayed
+  Set<MapMarker> _markers = {};
 
   Future<void> _onMapCreated(GoogleMapController controller) async {
-    _controller.complete(controller);
-    setState(() {
-      _isMapLoading = false;
-    });
-
-    _initMarkers();
-  }
-
-  void _initMarkers() async {
+    Position pos = await getCurrentPosition();
     final BitmapDescriptor markerImage = await MapHelper.getMarkerImageFromUrl(
-        'https://img.icons8.com/office/25/000000/marker.png');
-    _clusterManager = await MapHelper.initClusterManager(
-      widget.markers.toList(),
+        'https://img.icons8.com/material-rounded/24/000000/marker-a.png');
+    List<MapMarker> markers = [
+      ...widget.markers,
+      MapMarker(
+        id: 'CURRENT_POSITION',
+        position: LatLng(pos.latitude, pos.longitude),
+        icon: markerImage,
+      )
+    ];
+    Fluster<MapMarker> clusterManager = await MapHelper.initClusterManager(
+      markers,
       _minClusterZoom,
       _maxClusterZoom,
     );
-    _updateMarkers();
+    setState(() {
+      _controller = controller;
+      _isMapLoading = false;
+      _currentPosition = pos;
+      _markers = markers.toSet();
+      _clusterManager = clusterManager;
+      _currentZoom = 5;
+      _controller.animateCamera(
+        CameraUpdate.newLatLngZoom(
+          LatLng(_currentPosition.latitude, _currentPosition.longitude),
+          _currentZoom,
+        ),
+      );
+    });
   }
 
-  /// Gets the markers and clusters to be displayed on the map for the current zoom level and
-  /// updates state.
   void _updateMarkers([double? updatedZoom]) {
     if (updatedZoom == _currentZoom) return;
-    if (updatedZoom != null) _currentZoom = updatedZoom;
     setState(() {
-      _loading = true;
-    });
-
-    // widget.markers
-    //   ..clear()
-    //   ..addAll(MapHelper.getClusterMarkers(_clusterManager, _currentZoom));
-
-    setState(() {
-      _loading = false;
+      if (updatedZoom != null) _currentZoom = updatedZoom;
+      _markers
+        ..clear()
+        ..addAll(MapHelper.getClusterMarkers(_clusterManager, _currentZoom));
     });
   }
 
-  Future<void> _onCameraMove(CameraPosition position) async {
-    _updateMarkers(position.zoom);
+  Future<void> _onCameraMove(CameraPosition? position) async {
+    if (position != null) {
+      _updateMarkers(position.zoom);
+    }
+  }
+
+  Future<void> _onTap(LatLng? position) async {
+    if (position != null) {
+      _controller.animateCamera(
+        CameraUpdate.newLatLngZoom(
+          position,
+          _currentZoom,
+        ),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -85,12 +111,13 @@ class _PostSearchMapViewState extends State<PostSearchMapView> {
     return Stack(
       children: [
         GoogleMap(
+          onTap: _onTap,
           onMapCreated: _onMapCreated,
           initialCameraPosition: CameraPosition(
             target: const LatLng(0, 0),
             zoom: _currentZoom,
           ),
-          markers: widget.markers.map((e) => e.toMarker()).toSet(),
+          markers: _markers.map((e) => e.toMarker()).toSet(),
           onCameraMove: _onCameraMove,
           myLocationButtonEnabled: false,
           mapToolbarEnabled: false,
@@ -100,9 +127,10 @@ class _PostSearchMapViewState extends State<PostSearchMapView> {
         Opacity(
           opacity: _isMapLoading ? 1 : 0,
           child: const Center(
-              child: CircularProgressIndicator(
-            color: Colors.blue,
-          )),
+            child: CircularProgressIndicator(
+              color: Colors.blue,
+            ),
+          ),
         ),
       ],
     );

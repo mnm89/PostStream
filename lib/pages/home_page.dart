@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:google_maps_in_flutter/models/map_marker.dart';
 
+import 'package:google_maps_in_flutter/helpers/map_helper.dart';
 import 'package:google_maps_in_flutter/services/user_service.dart';
 import 'package:google_maps_in_flutter/views/post/search/list_view.dart';
 import 'package:google_maps_in_flutter/views/post/search/map_view.dart';
@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
                   postUserLogout();
                   Navigator.popUntil(context, ModalRoute.withName('login'));
                 },
-                icon: const Icon(Icons.logout),
+                icon: const Icon(Icons.close),
               )
             ],
           ),
