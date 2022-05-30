@@ -1,6 +1,7 @@
-name: google_maps_in_flutter
-description: A new Flutter project.
-
+name: post_stream
+description: |
+  A new social media app, that allow users to post,comment and like contents related to a location.
+  A post could include text, images and videos
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev

@@ -4,8 +4,9 @@ import 'package:fluster/fluster.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_in_flutter/helpers/map_helper.dart';
-import 'package:google_maps_in_flutter/services/geolocation_service.dart';
+import 'package:post_stream/helpers/map_helper.dart';
+import 'package:post_stream/components/map_marker.dart';
+import 'package:post_stream/services/geolocation_service.dart';
 
 class PostSearchMapView extends StatefulWidget {
   const PostSearchMapView({Key? key, required this.markers}) : super(key: key);

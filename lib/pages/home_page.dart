@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:post_stream/components/map_marker.dart';
 
-import 'package:google_maps_in_flutter/helpers/map_helper.dart';
-import 'package:google_maps_in_flutter/services/user_service.dart';
-import 'package:google_maps_in_flutter/views/post/search/list_view.dart';
-import 'package:google_maps_in_flutter/views/post/search/map_view.dart';
+import 'package:post_stream/services/user_service.dart';
+import 'package:post_stream/views/post/search/list_view.dart';
+import 'package:post_stream/views/post/search/map_view.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);

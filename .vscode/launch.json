@@ -5,18 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "google_maps_in_flutter",
+            "name": "post_stream",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "google_maps_in_flutter (profile mode)",
+            "name": "post_stream (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "google_maps_in_flutter (release mode)",
+            "name": "post_stream (release mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"

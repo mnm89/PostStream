@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:google_maps_in_flutter/pages/home_page.dart';
-import 'package:google_maps_in_flutter/pages/login_page.dart';
-import 'package:google_maps_in_flutter/pages/registration_page.dart';
+import 'package:post_stream/pages/home_page.dart';
+import 'package:post_stream/pages/login_page.dart';
+import 'package:post_stream/pages/registration_page.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
 void main() async {

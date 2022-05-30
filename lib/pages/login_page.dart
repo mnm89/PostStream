@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_in_flutter/helpers/dialog_helper.dart';
-import 'package:google_maps_in_flutter/services/user_service.dart';
+import 'package:post_stream/helpers/dialog_helper.dart';
+import 'package:post_stream/services/user_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
