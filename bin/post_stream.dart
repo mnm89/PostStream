@@ -34,7 +34,7 @@ Future<void> bootstrapData() async {
     autoSendSessionId: true,
     debug: env['ENV'] == 'development',
   );
-  String path = '${Directory.current.path}/image.jpeg';
+  String path = '${Directory.current.path}/bin/image.jpeg';
   File file = File(path);
   if (!await file.exists()) throw 'File Not Exist $path';
   ParseUser user;
