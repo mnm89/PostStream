@@ -1,10 +1,12 @@
 {
     "cSpell.words": [
         "autocorrect",
+        "Cloneable",
         "Clusterable",
         "cupertino",
         "dotenv",
         "geolocation",
-        "geolocator"
+        "geolocator",
+        "rspeed"
     ]
 }

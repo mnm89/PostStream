@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:post_stream/pages/home_page.dart';
 import 'package:post_stream/pages/login_page.dart';
 import 'package:post_stream/pages/registration_page.dart';
@@ -7,13 +8,15 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: 'env');
+  Map<String, dynamic> config = await rootBundle
+      .loadString('assets/configuration.json')
+      .then((value) => jsonDecode(value));
   await Parse().initialize(
-    dotenv.get('PARSE_APP_ID'),
-    dotenv.get('PARSE_SERVER_URL'),
-    clientKey: dotenv.get('PARSE_CLIENT_KEY'),
+    config['PARSE_APP_ID'],
+    config['PARSE_SERVER_URL'],
+    clientKey: config['PARSE_CLIENT_KEY'],
     autoSendSessionId: true,
-    debug: dotenv.get('ENV', fallback: 'development') == 'development',
+    debug: config['ENV'],
   );
   runApp(const App());
 }

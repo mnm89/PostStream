@@ -32,12 +32,9 @@ class _LoginPageState extends State<LoginPage> {
     final username = controllerUsername.text.trim();
     final password = controllerPassword.text.trim();
     if (username.isEmpty | password.isEmpty) return;
-    var response = await postUserLogin(username, password);
-    if (response.success) {
-      Navigator.pushReplacementNamed(context, 'home');
-    } else {
-      showError(context)(response.error!.message);
-    }
+    postUserLogin(username, password)
+        .catchError((error) => showError(context)(error))
+        .then((value) => Navigator.pushReplacementNamed(context, 'home'));
   }
 
   @override

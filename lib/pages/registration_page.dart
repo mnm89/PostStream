@@ -115,14 +115,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
     final password = controllerPassword.text.trim();
     if (username.isEmpty | email.isEmpty | password.isEmpty) return;
 
-    var response = await postUserRegister(username, password, email);
-
-    if (response.success) {
-      Navigator.canPop(context)
-          ? Navigator.pop(context)
-          : Navigator.pushReplacementNamed(context, 'login');
-    } else {
-      showError(context)(response.error!.message);
-    }
+    postUserRegister(username, password, email)
+        .catchError((error) => showError(context)(error))
+        .then((value) => Navigator.canPop(context)
+            ? Navigator.pop(context)
+            : Navigator.pushReplacementNamed(context, 'login'));
   }
 }

@@ -44,5 +44,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
-env*
-!env.example
+.env*
+!.env.example
+.parse.local
+.parse.project
