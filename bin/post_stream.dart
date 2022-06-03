@@ -1,9 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:cli_util/cli_logging.dart';
-import 'package:cli_util/cli_util.dart';
-import 'package:path/path.dart' as path;
 import 'package:dotenv/dotenv.dart';
 import 'package:post_stream/models/gallery.dart';
 import 'package:post_stream/models/post.dart';
@@ -12,9 +9,7 @@ import 'package:post_stream/services/user_service.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:faker/faker.dart';
 
-Logger logger = Logger.standard();
-String sdkPath = getSdkPath();
-File versionFile = File(path.join(sdkPath, 'version'));
+import 'args_parser.dart';
 
 Future<void> createAppConfiguration() async {
   var env = DotEnv(includePlatformEnvironment: true)..load();
@@ -34,7 +29,7 @@ Future<void> bootstrapData() async {
     autoSendSessionId: true,
     debug: env['ENV'] == 'development',
   );
-  String path = '${Directory.current.path}/bin/image.jpeg';
+  String path = '${Directory.current.path}/assets/images/default_bg.jpeg';
   File file = File(path);
   if (!await file.exists()) throw 'File Not Exist $path';
   ParseUser user;
@@ -79,27 +74,4 @@ Future<void> bootstrapData() async {
   await gallery.save();
 }
 
-void main(List<String> args) async {
-  logger.stdout('-- Dart SDK --');
-  logger.stdout('Path: $sdkPath');
-  logger.stdout('Version: ${versionFile.readAsStringSync()}');
-
-  logger.stdout('-- Welcome to Post Stream CLI --');
-  logger.stdout('Do you want to bootstrap data in your parse server ? (y/n)');
-  final input = stdin.readLineSync();
-
-  if (input == 'y') {
-    final progress = logger.progress('Running bootstrap data script ....\n');
-
-    try {
-      await bootstrapData();
-      progress.finish(
-          message: 'Successfully bootstrap data in ', showTiming: true);
-    } catch (e) {
-      progress.finish(message: 'Error', showTiming: true);
-      logger.stdout(e.toString());
-      exit(1);
-    }
-  }
-  exit(0);
-}
+void main(List<String> args) => CMD.parse(args);

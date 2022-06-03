@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:post_stream/helpers/dialog_helper.dart';
 import 'package:post_stream/services/user_service.dart';
 
@@ -13,28 +14,51 @@ class _LoginPageState extends State<LoginPage> {
   final controllerUsername = TextEditingController();
   final controllerPassword = TextEditingController();
 
+  bool _isLoading = false;
+
   @override
   void initState() {
     super.initState();
-    checkCurrentUser();
+    _checkCurrentUser();
   }
 
-  void checkCurrentUser() async {
+  void _checkCurrentUser() async {
+    setState(() {
+      _isLoading = true;
+    });
     try {
-      await getCurrentUser();
-      Navigator.pushReplacementNamed(context, 'home');
+      await getCurrentUser().then(_onUser);
     } catch (e) {
-      postUserLogout();
+      await postUserLogout();
     }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
-  void doUserLogin() async {
+  void _onUser(ParseUser user) {
+    Future.delayed(const Duration(milliseconds: 500)).then((value) {
+      Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
+    });
+  }
+
+  void _doUserLogin() async {
     final username = controllerUsername.text.trim();
     final password = controllerPassword.text.trim();
     if (username.isEmpty | password.isEmpty) return;
+    setState(() {
+      _isLoading = true;
+    });
     postUserLogin(username, password)
-        .catchError((error) => showError(context)(error))
-        .then((value) => Navigator.pushReplacementNamed(context, 'home'));
+        .catchError(
+          (error) => showError(context)(error),
+        )
+        .then(_onUser)
+        .whenComplete(
+          () => setState(() {
+            _isLoading = false;
+          }),
+        );
   }
 
   @override
@@ -49,11 +73,7 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                SizedBox(
-                  height: 200,
-                  child: Image.network(
-                      'http://blog.back4app.com/wp-content/uploads/2017/11/logo-b4a-1-768x175-1.png'),
-                ),
+                SizedBox(height: 200, child: Image.asset('images/logo.png')),
                 const Center(
                   child: Text('Flutter on Back4App',
                       style:
@@ -100,9 +120,14 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 SizedBox(
                   height: 50,
-                  child: ElevatedButton(
-                    child: const Text('Login'),
-                    onPressed: () => doUserLogin(),
+                  child: ElevatedButton.icon(
+                    icon: _isLoading
+                        ? const CircularProgressIndicator()
+                        : const Icon(Icons.account_circle_outlined),
+                    label: Text(
+                      _isLoading ? 'Loading...' : 'Login',
+                    ),
+                    onPressed: _isLoading ? null : _doUserLogin,
                   ),
                 ),
                 const SizedBox(
@@ -112,7 +137,9 @@ class _LoginPageState extends State<LoginPage> {
                   height: 50,
                   child: TextButton(
                     child: const Text('Register'),
-                    onPressed: () => Navigator.pushNamed(context, 'register'),
+                    onPressed: _isLoading
+                        ? null
+                        : () => Navigator.pushNamed(context, 'register'),
                   ),
                 ),
               ],

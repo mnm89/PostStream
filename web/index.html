@@ -29,8 +29,6 @@
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png" />
-  <!-- FIXME: Add your Google Maps API key -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=XXXXXXXXXXXXXXXXXXXXXXXX"></script>
 
   <title>post_stream</title>
   <link rel="manifest" href="manifest.json">
@@ -43,6 +41,7 @@
   <script>
     var serviceWorkerVersion = null;
     var scriptLoaded = false;
+    var googleMapsLoaded = false;
     function loadMainDartJs() {
       if (scriptLoaded) {
         return;
@@ -53,6 +52,21 @@
       scriptTag.type = 'application/javascript';
       document.body.append(scriptTag);
     }
+    function loadGoogleMaps(key) {
+      if (googleMapsLoaded) {
+        return;
+      }
+      googleMapsLoaded = true;
+      var scriptTag = document.createElement('script');
+      scriptTag.src = 'https://maps.googleapis.com/maps/api/js?key=' + key;
+      scriptTag.type = 'application/javascript';
+      document.body.append(scriptTag);
+
+    }
+    fetch('/assets/env.json')
+      .then(res => res.json())
+      .then((out) => loadGoogleMaps(out.GOOGLE_MAPS_API_KEY))
+      .catch(err => console.error(err));
 
     if ('serviceWorker' in navigator) {
       // Service workers are supported. Use them.

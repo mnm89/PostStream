@@ -48,3 +48,4 @@ app.*.map.json
 !.env.example
 .parse.local
 .parse.project
+/assets/env.json

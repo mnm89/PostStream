@@ -9,14 +9,14 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Map<String, dynamic> config = await rootBundle
-      .loadString('assets/configuration.json')
+      .loadString('env.json')
       .then((value) => jsonDecode(value));
   await Parse().initialize(
     config['PARSE_APP_ID'],
     config['PARSE_SERVER_URL'],
     clientKey: config['PARSE_CLIENT_KEY'],
     autoSendSessionId: true,
-    debug: config['ENV'],
+    debug: config['ENV'] == 'development',
   );
   runApp(const App());
 }

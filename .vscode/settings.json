@@ -5,8 +5,10 @@
         "Clusterable",
         "cupertino",
         "dotenv",
+        "fullscreen",
         "geolocation",
         "geolocator",
-        "rspeed"
+        "rspeed",
+        "sublist"
     ]
 }
